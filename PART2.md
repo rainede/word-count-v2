@@ -1,42 +1,40 @@
 # README
 
-You can browse the contents of a remote folder through the `$ hadoop fs –ls` command, which is similar to the Unix listing command.
 
- 
+1. Browse Remote Folder
+`$ hadoop fs –ls` command, 
+which is similar to the Unix listing `$ ls` command.
 
-You should only worry about two folders of the filesystem.
-
-The /data folder is the destination for large datasets to be processed.  You can have a look at it by invoking the following command: (There should be some files, including a 35 GB Wikipedia dump
-
+2. Specific to our hadoop cluster
 `$ hadoop fs -ls /data`
-
+The /data folder is the destination for large datasets to be processed.  You can have a look at it by invoking the following command: (There should be some files, including a 35 GB Wikipedia dump
  
-##bWORDCOUNT EXECUTION IN THE HADOOP CLUSTER
+## WORDCOUNT EXECUTION IN THE HADOOP CLUSTER
  
-
 We will now perform the required steps to run the WordCount v1 program we created last week in our Hadoop cluster. However, we will first use the small input dataset that we used last week.
-
-First, we need to create a folder in our HDFS personal space to store the input data. That operation can be solved with the –mkdir option:
+3. Create a folder (make a directory) in our HDFS personal space to store the input data. That operation can be solved with the `$ –mkdir` option:
 
 `$ hadoop fs –mkdir input`
 
-If you browse now the contents of your folder you should see the newly created folder.
+4. If you browse now the contents of your folder you should see the newly created folder.
 
 `$ hadoop fs -ls`
 
-Now, let’s copy the text file to the HDFS. File transfer from a local filesystem to Hadoop is perform using the –copyFromLocal command:
+5. Copy the text file to the HDFS. File transfer from a local filesystem to Hadoop is perform using the `$ –copyFromLocal` command:
 
 `$ hadoop fs -copyFromLocal input/sherlock.txt input`
 
-If you now check the contents of the input folder in HDFS you should see the file
+6. Check the contents of the input folder in HDFS to see the file just copied
 
 `$ hadoop fs –ls input`
 
-Once your data is copied into HDFS, you can run your previously defined MapReduce job there now. Keep in mind that input and output paths will be resolved into the HDFS instead of the local file system on the computer you are using.
+7. Run your previously defined MapReduce job there now. Input and output paths will be resolved into the HDFS instead of the local file system on the computer you are using.
 
 `$ hadoop jar dist/WordCount.jar WordCount input out`
 
-You should see the usual Hadoop log if the paths you have provided for the input and jar file are correct. Finally, once the process is complete copy the results file back to your local filesystem by using the fs –copyToLocal option. Remember that Reducer#1 output is provided in a file called part-00000
+8. Check that you see the usual Hadoop log.  If not, verify the paths provided for the input and jar file are correct. 
+
+9/ Finally, once the process is complete copy the results file back to your local filesystem by using the fs –copyToLocal option. Remember that Reducer#1 output is provided in a file called part-00000
 
 `$ hadoop fs –copyToLocal <hdfsfile> <localdestination>`
 
