@@ -11,7 +11,7 @@ The /data folder is the destination for large datasets to be processed.  You can
 `$ hadoop fs -ls /data`
 
  
-WORDCOUNT EXECUTION IN THE HADOOP CLUSTER
+##bWORDCOUNT EXECUTION IN THE HADOOP CLUSTER
  
 
 We will now perform the required steps to run the WordCount v1 program we created last week in our Hadoop cluster. However, we will first use the small input dataset that we used last week.
@@ -47,8 +47,9 @@ After retrieving the output you can remove the output folder through the –rmr 
 How many Mappers and Reducers have been involved in the work?
 
 You can change the number of Reducers that get involved in the job by manually configuring it as part of the job configuration (WordCount.java). Try to add this line to the runJob method of WordCount
-
+```java
  job.setNumReduceTasks(3);
+ ```
 
 Repackage the Hadoop program using Ant, and run it again on the cluster. There should be now more part-0000x files in the output folder (one per reducer). Have a look at those files (you can either copy them to your local folder, or quickly dump their contents using the hadoop fs –cat command.  
 
@@ -170,7 +171,7 @@ You can change the number of Reducers that get involved in the job by manually c
 ```java
  job.setNumReduceTasks(3);
 ```
-Repackage the Hadoop program using Ant, and run it again on the cluster. There should be now more part-0000x files in the output folder (one per reducer). Have a look at those files (you can either copy them to your local folder, or quickly dump their contents using the hadoop fs –cat command.  
+Repackage the Hadoop program using Ant, and run it again on the cluster. There should be now more part-0000x files in the output folder (one per reducer). Have a look at those files (you can either copy them to your local folder, or quickly dump their contents using the `$ hadoop fs –cat` command.  
 
 Can you see a clear pattern on how Hadoop partitions the keys among multiple reducers? Does it make easier or harder now the problem of manually retrieving information about a specific key? E.g. How many times the word Sherlock appears in the text?
 
