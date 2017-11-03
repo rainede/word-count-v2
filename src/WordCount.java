@@ -17,6 +17,7 @@ public static void runJob(String[] input, String output) throws Exception {
   Job job = new Job(conf);
   job.setJarByClass(WordCount.class);
   job.setMapperClass(TokenizerMapper.class);
+   job.setNumReduceTasks(3);
   job.setReducerClass(IntSumReducer.class);
   job.setMapOutputKeyClass(Text.class);
   job.setMapOutputValueClass(IntWritable.class);
