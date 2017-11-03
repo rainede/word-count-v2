@@ -80,21 +80,21 @@ Once the job finishes have a look at the output results provided by Hadoop (eith
 
  
 
-ADDING A COMBINER
+# ADDING A COMBINER
  
 
 In this case it should be possible to significantly improve the overall MapReduce performance by adding a Combiner to the process. Add a Combiner to the Hadoop job by adding to the JobConf the following line:
-
+```java
  job.setCombinerClass(NameOfTheCombiner.class);
-
+```
  So we now have
-
+```java
 job.setMapperClass(TokenizerMapper.class);
 
 job.setCombinerClass(IntSumReducer.class);
 
 job.setReducerClass(IntSumReducer.class);
-
+```
  
 
 in the WordCount.java file.
@@ -105,8 +105,10 @@ Have you seen a noticeable improvement in performance? You can go to the web UI 
 
 In order to understand why it has improved, have a look at the Map output records, Combine input records, Combine output records and Reduce input records. Can you see the impact that defining a Combiner has with large jobs?
 
-Finally, have a look at the results of your process. Can you improve the quality of your word counting program by detecting in your StringTokenizer filter some of the characters that appear at the start of the file? There are quite a few symbols which haven't been filtered out with the base filter. However, this approach needs to specify every single special character. Instead, you can run a regexp before splitting the file, in order to eliminate all non-alphabetic characters: String line = value.toString().replaceAll("[^a-zA-Z\\s]", ""); ould only worry about two folders of the filesystem.
-
+Finally, have a look at the results of your process. Can you improve the quality of your word counting program by detecting in your StringTokenizer filter some of the characters that appear at the start of the file? There are quite a few symbols which haven't been filtered out with the base filter. However, this approach needs to specify every single special character. Instead, you can run a regexp before splitting the file, in order to eliminate all non-alphabetic characters: 
+```java
+String line = value.toString().replaceAll("[^a-zA-Z\\s]", ""); 
+```
 The /data folder is the destination for large datasets to be processed.  You can have a look at it by invoking the following command: (There should be some files, including a 35 GB Wikipedia dump
 
 `$ hadoop fs -ls /data`
@@ -127,7 +129,7 @@ IF YOU WANT TO COPY FILES INTO THE HDFS, COPY THEM INTO A SUBFOLDER OF YOUR USER
 
  
 
-WORDCOUNT EXECUTION IN THE HADOOP CLUSTER
+# WORDCOUNT EXECUTION IN THE HADOOP CLUSTER
  
 
 We will now perform the required steps to run the WordCount program we created last week in our Hadoop cluster. However, we will first use the small input dataset that we used last week.
@@ -146,33 +148,35 @@ Now, let’s copy the text file to the HDFS. File transfer from a local filesyst
 
 If you now check the contents of the input folder in HDFS you should see the file
 
-hadoop fs –ls input
+
+`$ hadoop fs –ls input`
 
 Once your data is copied into HDFS, you can run your previously defined MapReduce job there now. Keep in mind that input and output paths will be resolved into the HDFS instead of the local file system on the computer you are using.
 
- hadoop jar dist/WordCount.jar WordCount input out
+`$ hadoop jar dist/WordCount.jar WordCount input out`
 
 You should see the usual Hadoop log if the paths you have provided for the input and jar file are correct. Finally, once the process is complete copy the results file back to your local filesystem by using the fs –copyToLocal option. Remember that Reducer#1 output is provided in a file called part-00000
 
-hadoop fs –copyToLocal <hdfsfile> <localdestination>
+
+`$ hadoop fs –copyToLocal <hdfsfile> <localdestination>`
 
 After retrieving the output you can remove the output folder through the –rmr fs command. If the designated output folder was out, you can remove it by doing:
 
-hadoop fs –rm -r out
+`$ hadoop fs –rm -r out`
 
 How many Mappers and Reducers have been involved in the work?
 
 You can change the number of Reducers that get involved in the job by manually configuring it as part of the job configuration (WordCount.java). Try to add this line to the runJob method of WordCount
-
+```java
  job.setNumReduceTasks(3);
-
+```
 Repackage the Hadoop program using Ant, and run it again on the cluster. There should be now more part-0000x files in the output folder (one per reducer). Have a look at those files (you can either copy them to your local folder, or quickly dump their contents using the hadoop fs –cat command.  
 
 Can you see a clear pattern on how Hadoop partitions the keys among multiple reducers? Does it make easier or harder now the problem of manually retrieving information about a specific key? E.g. How many times the word Sherlock appears in the text?
 
 Actually Hadoop has a very useful HDFS command that retrieves all files from a remote folder and merges them into a single file in the local file system on the computer you are using.. In order to locally aggregate all three files invoke the following command:
 
-hadoop fs –getmerge out count.txt
+`$ hadoop fs –getmerge out count.txt`
 
  
 
@@ -201,24 +205,30 @@ ADDING A COMBINER
 
 In this case it should be possible to significantly improve the overall MapReduce performance by adding a Combiner to the process. Add a Combiner to the Hadoop job by adding to the JobConf the following line:
 
+```java
  job.setCombinerClass(NameOfTheCombiner.class);
+ ```
 
  So we now have
-
+```java
 job.setMapperClass(TokenizerMapper.class);
 
 job.setCombinerClass(IntSumReducer.class);
 
 job.setReducerClass(IntSumReducer.class);
+```
 
  
 
 in the WordCount.java file.
 
-Repackage the Hadoop program again (ant clean dist) and repeat the Hadoop execution over the same data.
+Repackage the Hadoop program again (`$ ant clean dist`) and repeat the Hadoop execution over the same data.
 
 Have you seen a noticeable improvement in performance? You can go to the web UI and retrieve the total execution time of both jobs in order to compare it.
 
 In order to understand why it has improved, have a look at the Map output records, Combine input records, Combine output records and Reduce input records. Can you see the impact that defining a Combiner has with large jobs?
 
-Finally, have a look at the results of your process. Can you improve the quality of your word counting program by detecting in your StringTokenizer filter some of the characters that appear at the start of the file? There are quite a few symbols which haven't been filtered out with the base filter. However, this approach needs to specify every single special character. Instead, you can run a regexp before splitting the file, in order to eliminate all non-alphabetic characters: String line = value.toString().replaceAll("[^a-zA-Z\\s]", ""); 
+Finally, have a look at the results of your process. Can you improve the quality of your word counting program by detecting in your StringTokenizer filter some of the characters that appear at the start of the file? There are quite a few symbols which haven't been filtered out with the base filter. However, this approach needs to specify every single special character. Instead, you can run a regexp before splitting the file, in order to eliminate all non-alphabetic characters: 
+```java
+String line = value.toString().replaceAll("[^a-zA-Z\\s]", ""); 
+```
